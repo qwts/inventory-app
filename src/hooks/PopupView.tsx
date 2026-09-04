@@ -22,20 +22,20 @@ export function usePopup() {
   const popupElement = popupContent
     ? ReactDOM.createPortal(
         <div
-          className="fixed inset-0 items-center justify-center bg-blue-950 bg-opacity-95 p-10"
+          className="fixed inset-0 flex flex-col items-center justify-center bg-blue-950 bg-opacity-95 p-10"
           onClick={(e) => {
             e.stopPropagation();
             closePopup();
           }}
         >
-          <div className="flex justify-between px-5 mb-5">
+          <div className="flex self-stretch justify-between px-5 mb-5">
             <div className="w-[142px]">{popupContent.leftBlock}</div>
             <div className="w-[42px]">
               <button className="modal-close px-3 py-1">✖</button>
             </div>
           </div>
           <div
-            className="h-[90%] mx-5 bg-white rounded-2xl overflow-hidden"
+            className="self-stretch h-[90%] mx-5 bg-white rounded-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {popupContent.content}
