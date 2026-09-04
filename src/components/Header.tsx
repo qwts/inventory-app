@@ -3,30 +3,28 @@ import { useEffect, useState } from "react";
 import ExpandingButton from "./ExpandingButton";
 
 export default function Header() {
-  const [, setCurrentMode] = useState(1); // 1 = Light Mode, 0 = Dark Mode
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const prefersDarkMode = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setCurrentMode(prefersDarkMode ? 0 : 1);
-      applyTheme(prefersDarkMode ? 0 : 1);
-    }
-  }, []);
+  // 1 = Light Mode, 0 = Dark Mode
+  const [mode, setMode] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? 0
+        : 1
+  );
 
-  function applyTheme(mode: number) {
+  function applyTheme(newMode: number) {
     document.documentElement.setAttribute(
       "data-theme",
-      mode ? "light" : "dark"
+      newMode ? "light" : "dark"
     );
   }
 
+  useEffect(() => {
+    applyTheme(mode);
+  }, [mode]);
+
   function toggleDarkMode() {
-    setCurrentMode((prevMode) => {
-      const newMode = prevMode === 0 ? 1 : 0;
-      applyTheme(newMode);
-      return newMode;
-    });
+    setMode((prevMode) => (prevMode === 0 ? 1 : 0));
   }
 
   return (
