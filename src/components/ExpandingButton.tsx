@@ -18,12 +18,7 @@ export default function ExpandingButton({
         props?.className?.length ? " " + props.className : ""
       }`}
     >
-      {/* mode comes from Header's state; the theme also initializes from
-          prefers-color-scheme, which the server cannot know, so the first
-          paint may legitimately differ from the server HTML */}
-      <span suppressHydrationWarning>
-        {isDark ? "Light Toggle" : "Dark Toggle"}
-      </span>
+      <span>{isDark ? "Light Toggle" : "Dark Toggle"}</span>
     </button>
   );
 }
