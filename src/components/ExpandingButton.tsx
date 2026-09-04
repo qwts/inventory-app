@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import { ButtonHTMLAttributes } from "react";
 import "./ExpandingButton.css";
 
@@ -10,15 +9,11 @@ interface ExpandingButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export default function ExpandingButton({
   ...props
 }: ExpandingButtonProps): React.ReactNode {
-  // Reading data-theme happens after mount: window access during render
-  // crashes prerendering, and the attribute is only set client-side.
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(
-      document.documentElement.getAttribute("data-theme") === "dark"
-    );
-  }, []);
+  // The theme attribute only exists client-side; guard so prerender never
+  // touches document, and read during render so the label tracks toggles.
+  const isDark =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "dark";
 
   return (
     <button
