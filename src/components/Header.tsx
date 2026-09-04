@@ -42,7 +42,11 @@ export default function Header() {
           />
         </div>
         <div className="flex l:w-[124px] justify-end xl:justify-start">
-          <ExpandingButton onClick={toggleDarkMode} className="self-center" />
+          <ExpandingButton
+            isDark={mode === 0}
+            onClick={toggleDarkMode}
+            className="self-center"
+          />
         </div>
       </div>
       <hr />
