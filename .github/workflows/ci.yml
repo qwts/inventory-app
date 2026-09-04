@@ -3,6 +3,9 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    # Drafts skip the jobs; ready_for_review re-triggers so a draft marked
+    # ready without a new commit cannot merge with gates that never ran.
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
 
