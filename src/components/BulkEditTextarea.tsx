@@ -46,17 +46,17 @@ export default function BulkEditTextarea() {
         const updatedLines = updatedTextItems
           .split("\n")
           .filter((item) => item);
-        updatedLines
-          .filter((item) => item.match(/\|[0-9]*$/))
-          .filter(
-            (item, index) =>
-              index > previousTexItems.length - 1 ||
-              item.replace(/\s/g, "") !==
-                previousTexItems[index].replace(/\s/g, "")
-          )
-          .map(async (item) => {
-            addItem(Album.fromString(item));
-          });
+        await Promise.all(
+          updatedLines
+            .filter((item) => item.match(/\|[0-9]*$/))
+            .filter(
+              (item, index) =>
+                index > previousTexItems.length - 1 ||
+                item.replace(/\s/g, "") !==
+                  previousTexItems[index].replace(/\s/g, "")
+            )
+            .map((item) => addItem(Album.fromString(item)))
+        );
 
         await Promise.all(
           updatedLines
@@ -71,10 +71,8 @@ export default function BulkEditTextarea() {
     );
     afterChangeUpdateItems(textItems);
     window.addEventListener("closeBulkEditView", afterChangeUpdateItems);
-    return window.removeEventListener(
-      "closeBulkEditView",
-      afterChangeUpdateItems
-    );
+    return () =>
+      window.removeEventListener("closeBulkEditView", afterChangeUpdateItems);
   }, [textItems, addItem, debounce]);
 
   function getTitle(title: string) {
