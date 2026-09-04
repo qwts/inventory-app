@@ -2,8 +2,6 @@
 import React, { createContext, useContext, useCallback } from "react";
 import { Album, AlbumProps } from "@/app/Album";
 
-let _totalCount = 0;
-
 const dispatchDbEvent = (eventType: string) => {
   window.dispatchEvent(
     new CustomEvent("indexedDBUpdate", { detail: eventType })
@@ -19,7 +17,6 @@ interface IndexedDBContextType {
   removeItem: (id: number) => Promise<void>;
   getAllItems: () => Promise<Album[]>;
   removeAllItems: () => Promise<void>;
-  totalCount: () => number;
 }
 
 // ------------------------------------------------------
@@ -34,10 +31,6 @@ interface IndexedDBProviderProps {
   dbName?: string;
   storeName?: string;
   children: React.ReactNode;
-}
-
-function totalCount(): number {
-  return _totalCount;
 }
 
 // Utility function for opening DB
@@ -141,7 +134,6 @@ export const IndexedDBProvider: React.FC<IndexedDBProviderProps> = ({
       const request = store.getAll(); // Fetch all albums
 
       request.onsuccess = () => {
-        _totalCount = request.result.length;
         return resolve(request.result.map((item) => new Album(item)));
       };
       request.onerror = () => reject(request.error);
@@ -167,7 +159,6 @@ export const IndexedDBProvider: React.FC<IndexedDBProviderProps> = ({
         removeItem,
         getAllItems,
         removeAllItems,
-        totalCount,
       }}
     >
       {children}

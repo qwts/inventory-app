@@ -34,7 +34,10 @@ export default function Home() {
   return (
     <PopupProvider>
       <Header />
-      <Navigation lastAlbumId={albums.length && albums[albums.length - 1].id} />
+      <Navigation
+        lastAlbumId={albums.length && albums[albums.length - 1].id}
+        albumCount={albums.length}
+      />
       <Main albums={albums} />
     </PopupProvider>
   );
