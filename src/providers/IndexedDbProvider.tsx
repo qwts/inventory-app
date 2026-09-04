@@ -14,7 +14,7 @@ const dispatchDbEvent = (eventType: string) => {
 // 1) Create a context type interface
 // ------------------------------------------------------
 interface IndexedDBContextType {
-  addItem: (item: Album) => Promise<Album>;
+  addItem: (item: Album) => Promise<Album | null>;
   getItem: (id: string) => Promise<unknown>;
   removeItem: (id: number) => Promise<void>;
   getAllItems: () => Promise<Album[]>;
@@ -74,21 +74,24 @@ export const IndexedDBProvider: React.FC<IndexedDBProviderProps> = ({
 }) => {
   // Define your CRUD operations as callbacks
   const addItem = useCallback(
-    async (item: Album): Promise<Album> => {
+    async (item: Album): Promise<Album | null> => {
+      if (
+        !item.artistName &&
+        !item.albumName &&
+        !item.barcode &&
+        !item.country &&
+        !item.genre &&
+        !item.year &&
+        !item.variant &&
+        !item.image
+      ) {
+        // Nothing to store. Resolve (with null) rather than hang: callers
+        // await this inside Promise.all, so an unsettled promise stalls
+        // the whole batch forever.
+        return null;
+      }
       const store = await getTransaction(dbName, storeName, "readwrite");
       return new Promise<Album>((resolve, reject) => {
-        if (
-          item.artistName === "" &&
-          item.albumName === "" &&
-          item.barcode === "" &&
-          item.country === "" &&
-          item.genre === "" &&
-          item.year === "" &&
-          item.variant === "" &&
-          item.image === ""
-        ) {
-          return;
-        }
         const request = item.id
           ? store.put(item.toJSON())
           : store.add(item.toJSON());
