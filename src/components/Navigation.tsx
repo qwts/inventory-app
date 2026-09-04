@@ -93,7 +93,15 @@ export default function Navigation({ lastAlbumId }: NavigationProps) {
           <button
             id="clear"
             className="px-4 py-1"
-            onClick={() => removeAllItems()}
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Remove every album from the library? This cannot be undone."
+                )
+              ) {
+                removeAllItems();
+              }
+            }}
           >
             Clear
           </button>
