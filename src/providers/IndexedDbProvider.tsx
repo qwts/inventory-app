@@ -51,6 +51,14 @@ async function openDB(dbName: string, storeName: string, version = 1) {
 
 // Run one request against the store and settle the connection afterwards.
 // Without the close, every operation leaks an open connection.
+//
+// Success is reported from transaction.oncomplete, not request.onsuccess: a
+// request can succeed before its transaction commits, and the commit itself
+// can still abort (storage or durability failures), so resolving earlier
+// would report writes that get rolled back. The completion handlers are
+// registered before issue() runs, so a synchronous throw from it (an invalid
+// inline key, a structured-clone failure) rejects the promise yet still
+// closes the connection when the transaction settles.
 async function runRequest<T>(
   dbName: string,
   storeName: string,
@@ -60,11 +68,22 @@ async function runRequest<T>(
   const db = await openDB(dbName, storeName);
   return new Promise<T>((resolve, reject) => {
     const transaction = db.transaction(storeName, mode);
-    const request = issue(transaction.objectStore(storeName));
-    transaction.oncomplete = () => db.close();
-    transaction.onabort = () => db.close();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    let request: IDBRequest<T> | undefined;
+    transaction.oncomplete = () => {
+      db.close();
+      if (request) {
+        resolve(request.result);
+      }
+    };
+    transaction.onabort = () => {
+      db.close();
+      reject(
+        request?.error ??
+          transaction.error ??
+          new Error("IndexedDB transaction aborted")
+      );
+    };
+    request = issue(transaction.objectStore(storeName));
   });
 }
 
