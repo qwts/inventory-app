@@ -122,12 +122,6 @@ export class Album implements AlbumProps {
     );
   }
 
-  compare(album: Album): boolean {
-    return Object.entries(album).every(([key, value]) => {
-      return this.album[key as keyof AlbumProps] === value;
-    });
-  }
-
   toJSON(): AlbumProps {
     return this.album;
   }
