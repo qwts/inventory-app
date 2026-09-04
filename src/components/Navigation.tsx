@@ -7,43 +7,25 @@ import UploadInventory from "./UploadInventory";
 import { Album } from "@/app/Album";
 interface NavigationProps {
   lastAlbumId?: number;
+  albumCount: number;
 }
 
-export default function Navigation({ lastAlbumId }: NavigationProps) {
-  const { addItem, removeItem, removeAllItems, totalCount } = useIndexedDB();
+export default function Navigation({
+  lastAlbumId,
+  albumCount,
+}: NavigationProps) {
+  const { addItem, removeItem, removeAllItems } = useIndexedDB();
   const { showPopup } = usePopupContext();
   const uploadForm = useRef(<UploadInventory />);
-  function valueForCounter(counter: string) {
-    switch (counter) {
-      case "Total Inventory":
-        return totalCount();
-      case "Viewing":
-        return totalCount();
-      case "Total Pages":
-        return 1;
-      case "Current Page":
-        return 1;
-      case "Search Results":
-        return 0;
-      default:
-        return 0;
-    }
-  }
   return (
     <nav>
       <div className="flex flex-wrap gap-y-10 my-10 px-5 justify-between">
         <div className="flex flex-grow flex-wrap space-x-4 justify-center lg:justify-start lg:pl-[118px]">
-          {[
-            "Total Inventory",
-            "Viewing",
-            "Total Pages",
-            "Current Page",
-            "Search Results",
-          ].map((item, index) => (
-            <div key={index}>
+          {["Total Inventory", "Viewing"].map((item) => (
+            <div key={item}>
               <span>
                 <strong>{item}:</strong>
-                <span className="pl-4">{valueForCounter(item)}</span>
+                <span className="pl-4">{albumCount}</span>
               </span>
             </div>
           ))}

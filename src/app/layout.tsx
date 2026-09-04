@@ -14,10 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Home Inventoryp",
-  description: `Home Inventory is a simple web app to keep track of your home inventory. ${Math.ceil(
-    Math.random() * 100
-  )}`,
+  title: "Home Inventory",
+  description:
+    "Home Inventory is a simple web app to keep track of your home inventory.",
 };
 
 export default function RootLayout({
